@@ -10,3 +10,12 @@ export class AppController {
     return this.appService.getHello();
   }
 }
+
+
+@Controller("convert")
+export class ConvertController {
+  @Get("image")
+  html2image():string {
+    return 'html2image'
+  }
+}
