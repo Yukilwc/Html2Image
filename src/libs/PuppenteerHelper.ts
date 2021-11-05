@@ -36,11 +36,10 @@ class PuppenteerHelper {
         }
         await this.waitForNetworkIdle(page, 500)
         const date = new Date()
-        const path = `static`
         let filePath
         // 根据 type 返回不同的类型 一种图片路径、一种 base64
         if (params.fileType === 'path') {
-            filePath = `${path}/${"generate"}.${params.imageType}`
+            filePath = `static/generate-${new Date().getTime()}.${params.imageType}`
             await page.screenshot({
                 path: filePath,
                 fullPage: true,
