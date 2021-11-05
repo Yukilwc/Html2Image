@@ -6,8 +6,8 @@
  * @LastEditors: falost
  * @LastEditTime: 2019-08-27 14:15:52
  */
-import fs from 'fs'
-import path from 'path'
+import * as fs from 'fs'
+import * as path from 'path'
 
 const mkdirsSync = (dirname) => {
     if (fs.existsSync(dirname)) {

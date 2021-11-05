@@ -2,6 +2,7 @@ import { Controller, Get, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
 const PuppenteerHelper = require('./libs/PuppenteerHelper');
+import * as fs from 'fs'
 
 const oneDay = 24 * 60 * 60;
 
@@ -32,7 +33,8 @@ export class ConvertController {
       let result = await this.generateSnapshot();
       return result;
     } catch (error) {
-      return "error"
+      console.error('==========', error)
+      return error.toString()
     }
 
   }
@@ -50,10 +52,13 @@ export class ConvertController {
    * @param {String} htmlRedisKey kv存储的key
    */
   async generateSnapshot() {
-    const html = 'html字符串'
-    const width = 375
-    const height = 667
-    const quality = 80
+    // let htmlStr = fs.readFileSync("static/email.html").toString()
+    // const html = htmlStr || 'html字符串'
+    const html = 'https://yukilwc.github.io/'
+    const htmlContent = ''
+    const width = 1920
+    const height = 1000
+    const quality = 100
     const ratio = 2
     const imageType = 'jpeg'
 

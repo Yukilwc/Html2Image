@@ -14,6 +14,7 @@ import * as puppeteer from 'puppeteer'
 console.log('==========puppeteer ', puppeteer)
 
 class PuppenteerHelper {
+    index = 1
     async createImg(params) {
         const browser = await puppeteer.launch({
             headless: false, // 默认为 true 打开浏览器，设置 false 不打开
@@ -27,32 +28,36 @@ class PuppenteerHelper {
             deviceScaleFactor: params.ratio
         })
         // 设置需要截图的html内容
-        await page.setContent(params.html)
-        await this.waitForNetworkIdle(page, 50)
+        if (params.htmlContent) {
+            await page.setContent(params.html)
+        }
+        else {
+            await page.goto(params.html)
+        }
+        await this.waitForNetworkIdle(page, 3000)
         const date = new Date()
         const path = `static`
         let filePath
         // 根据 type 返回不同的类型 一种图片路径、一种 base64
-        let index = 1
         if (params.fileType === 'path') {
-            filePath = `${path}/${index++}.${params.imageType}`
+            filePath = `${path}/${"generate"}.${params.imageType}`
             await page.screenshot({
                 path: filePath,
-                fullPage: false,
+                fullPage: true,
                 omitBackground: true
             })
         } else {
             filePath = await page.screenshot({
-                fullPage: false,
+                fullPage: true,
                 omitBackground: true,
                 encoding: 'base64'
             })
         }
         browser.close()
         return filePath
- 
+
         // mkdirsSync(path)
-   }
+    }
     // 等待HTML 页面资源加载完成
     waitForNetworkIdle(page, timeout, maxInflightRequests = 0) {
         page.on('request', onRequestStarted);
