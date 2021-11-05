@@ -16,8 +16,19 @@ console.log('==========puppeteer ', puppeteer)
 class PuppenteerHelper {
     index = 1
     async createImg(params) {
+        console.log('==========__dirname', __dirname)
+        console.log('==========process.cwd()', process.cwd())
         const browser = await puppeteer.launch({
-            headless: false, // 默认为 true 打开浏览器，设置 false 不打开
+            headless: true, // 默认为 true 打开浏览器，设置 false 不打开
+            args: [
+                '--disable-gpu',
+                '--disable-dev-shm-usage',
+                '--disable-setuid-sandbox',
+                '--no-first-run',
+                '--no-sandbox',
+                '--no-zygote',
+                '--single-process'
+            ]
         })
         // 通过创建浏览器标签来打开
         const page = await browser.newPage()
