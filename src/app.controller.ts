@@ -1,8 +1,9 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res, StreamableFile } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 const PuppenteerHelper = require('./libs/PuppenteerHelper');
 import * as fs from 'fs'
+import * as path from 'path'
 
 const oneDay = 24 * 60 * 60;
 
@@ -20,14 +21,39 @@ export class AppController {
 
 @Controller("convert")
 export class ConvertController {
+  options = {
+    url: '',
+    fileType:'path'
+  }
   @Get("image")
-  async htmlConvertImage(@Req() request: Request) {
+  async htmlConvertImage(@Req() request: Request, @Query('url') url) {
+    this.options.url = url
     const result: any = await this.handleSnapshot()
-    return { code: 10000, message: 'ok', result: result }
+    return { code: 10000, message: 'ok', result }
     // const  result= 'result2233'
     // console.log('==========result',result)
   }
-
+  @Get("file")
+  async getFile(@Res({ passthrough: true }) res, @Query('url') url) {
+    this.options.url = url
+    const result: any = await this.handleSnapshot()
+    const file = fs.createReadStream(path.join(process.cwd(), 'static/generate.jpeg'));
+    res.set({
+      // 'Content-Type': 'application/json',
+      'Content-Disposition': 'attachment; filename="generate.jpeg"',
+    });
+    return new StreamableFile(file);
+  }
+  @Get("base64")
+  async htmlConvertBase64(@Req() request: Request, @Query('url') url) {
+    this.options.url = url
+    this.options.fileType = "base64"
+    const result: any = await this.handleSnapshot()
+    return { code: 10000, message: 'ok', result }
+    // const  result= 'result2233'
+    // console.log('==========result',result)
+  }
+ 
   async handleSnapshot() {
     try {
       let result = await this.generateSnapshot();
@@ -54,7 +80,7 @@ export class ConvertController {
   async generateSnapshot() {
     // let htmlStr = fs.readFileSync("static/email.html").toString()
     // const html = htmlStr || 'html字符串'
-    const html = 'https://yukilwc.github.io/'
+    const html = this.options.url
     const htmlContent = ''
     const width = 1920
     const height = 1000
@@ -75,13 +101,13 @@ export class ConvertController {
         quality,
         ratio,
         imageType,
-        fileType: 'path',
+        fileType: this.options.fileType,
       });
     } catch (err) {
       // logger
       console.log(err)
     }
-    let imgUrl;
+    let imgUrl = imgBuffer
 
     // try {
     //   imgUrl = await this.uploadImage(imgBuffer);

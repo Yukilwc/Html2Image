@@ -34,7 +34,7 @@ class PuppenteerHelper {
         else {
             await page.goto(params.html)
         }
-        await this.waitForNetworkIdle(page, 3000)
+        await this.waitForNetworkIdle(page, 500)
         const date = new Date()
         const path = `static`
         let filePath
